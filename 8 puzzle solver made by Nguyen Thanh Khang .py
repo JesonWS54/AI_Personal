@@ -5,6 +5,7 @@ import heapq
 import tkinter as tk
 from tkinter import messagebox
 import random
+import math
 
 pygame.init()
 
@@ -41,13 +42,12 @@ TIMER_FONT = pygame.font.SysFont("Roboto", 20, bold=True)
 LABEL_FONT = pygame.font.SysFont("Roboto", 20, bold=True)
 
 # Trạng thái ban đầu và mục tiêu
-start_state = "265087431"
+start_state = "123045678"
 goal_state = "123456780"
 start_input = start_state
 goal_input = goal_state
 input_active = None
 
-# Các hàm thuật toán (giữ nguyên)
 def find_zero(state):
     idx = state.index('0')
     return idx // 3, idx % 3
@@ -83,70 +83,7 @@ def heuristic(state, goal_state):
     return sum(abs(goal_pos[state[i]][0] - i // 3) + abs(goal_pos[state[i]][1] - i % 3)
                for i in range(9) if state[i] != '0')
 
-def simple_hill_climbing(start_state, goal_state):
-    if not is_solvable(start_state, goal_state):
-        return None, 0, 0, 0
-    current_state = start_state
-    path = [current_state]
-    nodes_expanded = 0
-    visited = set([current_state])
-    while current_state != goal_state:
-        neighbors = get_next_states(current_state)
-        found_better = False
-        for neighbor in neighbors:
-            if neighbor not in visited:
-                nodes_expanded += 1
-                h = heuristic(neighbor, goal_state)
-                current_h = heuristic(current_state, goal_state)
-                if h < current_h:
-                    current_state = neighbor
-                    visited.add(current_state)
-                    path.append(current_state)
-                    found_better = True
-                    break
-        if not found_better and neighbors:
-            unvisited_neighbors = [n for n in neighbors if n not in visited]
-            if unvisited_neighbors:
-                current_state = random.choice(unvisited_neighbors)
-                visited.add(current_state)
-                path.append(current_state)
-                nodes_expanded += 1
-            else:
-                return path, nodes_expanded, len(path) - 1, len(path) - 1
-    return path, nodes_expanded, len(path) - 1, len(path) - 1
 
-def steepest_hill_climbing(start_state, goal_state):
-    if not is_solvable(start_state, goal_state):
-        return None, 0, 0, 0
-    current_state = start_state
-    path = [current_state]
-    nodes_expanded = 0
-    visited = set([current_state])
-    while current_state != goal_state:
-        neighbors = get_next_states(current_state)
-        best_neighbor = None
-        best_heuristic = heuristic(current_state, goal_state)
-        for neighbor in neighbors:
-            if neighbor not in visited:
-                nodes_expanded += 1
-                h = heuristic(neighbor, goal_state)
-                if h < best_heuristic:
-                    best_heuristic = h
-                    best_neighbor = neighbor
-        if best_neighbor:
-            current_state = best_neighbor
-            visited.add(current_state)
-            path.append(current_state)
-        elif neighbors:
-            unvisited_neighbors = [n for n in neighbors if n not in visited]
-            if unvisited_neighbors:
-                current_state = random.choice(unvisited_neighbors)
-                visited.add(current_state)
-                path.append(current_state)
-                nodes_expanded += 1
-            else:
-                return path, nodes_expanded, len(path) - 1, len(path) - 1
-    return path, nodes_expanded, len(path) - 1, len(path) - 1
 
 def bfs(start_state, goal_state):
     if not is_solvable(start_state, goal_state):
@@ -308,10 +245,179 @@ def ida_star(start_state, goal_state):
             return None, nodes_expanded[0], 0, 0
         threshold = new_threshold
 
+def simple_hill_climbing(start_state, goal_state):
+    if not is_solvable(start_state, goal_state):
+        return None, 0, 0, 0
+    current_state = start_state
+    path = [current_state]
+    nodes_expanded = 0
+    visited = set([current_state])
+    while current_state != goal_state:
+        neighbors = get_next_states(current_state)
+        found_better = False
+        for neighbor in neighbors:
+            if neighbor not in visited:
+                nodes_expanded += 1
+                h = heuristic(neighbor, goal_state)
+                current_h = heuristic(current_state, goal_state)
+                if h < current_h:
+                    current_state = neighbor
+                    visited.add(current_state)
+                    path.append(current_state)
+                    found_better = True
+                    break
+        if not found_better and neighbors:
+            unvisited_neighbors = [n for n in neighbors if n not in visited]
+            if unvisited_neighbors:
+                current_state = random.choice(unvisited_neighbors)
+                visited.add(current_state)
+                path.append(current_state)
+                nodes_expanded += 1
+            else:
+                return path, nodes_expanded, len(path) - 1, len(path) - 1
+    return path, nodes_expanded, len(path) - 1, len(path) - 1
+
+def steepest_hill_climbing(start_state, goal_state):
+    if not is_solvable(start_state, goal_state):
+        return None, 0, 0, 0
+    current_state = start_state
+    path = [current_state]
+    nodes_expanded = 0
+    visited = set([current_state])
+    while current_state != goal_state:
+        neighbors = get_next_states(current_state)
+        best_neighbor = None
+        best_heuristic = heuristic(current_state, goal_state)
+        for neighbor in neighbors:
+            if neighbor not in visited:
+                nodes_expanded += 1
+                h = heuristic(neighbor, goal_state)
+                if h < best_heuristic:
+                    best_heuristic = h
+                    best_neighbor = neighbor
+        if best_neighbor:
+            current_state = best_neighbor
+            visited.add(current_state)
+            path.append(current_state)
+        elif neighbors:
+            unvisited_neighbors = [n for n in neighbors if n not in visited]
+            if unvisited_neighbors:
+                current_state = random.choice(unvisited_neighbors)
+                visited.add(current_state)
+                path.append(current_state)
+                nodes_expanded += 1
+            else:
+                return path, nodes_expanded, len(path) - 1, len(path) - 1
+    return path, nodes_expanded, len(path) - 1, len(path) - 1
+
+
+def stochastic_hill_climbing(start_state, goal_state):
+    if not is_solvable(start_state, goal_state):
+        return None, 0, 0, 0
+    
+    current_state = start_state
+    path = [current_state]
+    nodes_expanded = 0
+    visited = set([current_state])
+    
+    while current_state != goal_state:
+        neighbors = get_next_states(current_state)
+    
+        unvisited_neighbors = [n for n in neighbors if n not in visited]
+        if not unvisited_neighbors:
+            return path, nodes_expanded, len(path) - 1, len(path) - 1
+        
+        current_heuristic = heuristic(current_state, goal_state)
+        
+        better_neighbors = []
+        for neighbor in unvisited_neighbors:
+            h = heuristic(neighbor, goal_state)
+            if h < current_heuristic:  
+                better_neighbors.append((neighbor, h))
+            nodes_expanded += 1
+        
+        if better_neighbors:
+            next_state = random.choice([n[0] for n in better_neighbors])
+            current_state = next_state
+            visited.add(current_state)
+            path.append(current_state)
+        else:
+            return path, nodes_expanded, len(path) - 1, len(path) - 1
+    
+    return path, nodes_expanded, len(path) - 1, len(path) - 1
+
+def manhattan_distance(state, goal):
+    total = 0
+    for i in range(9):
+        if state[i] != '0':
+            val = int(state[i])
+            goal_pos = goal.index(str(val))
+            curr_row, curr_col = i // 3, i % 3
+            goal_row, goal_col = goal_pos // 3, goal_pos % 3
+            total += abs(curr_row - goal_row) + abs(curr_col - goal_col)
+    return total
+
+def simulated_annealing(start_state, goal_state):
+    if not is_solvable(start_state, goal_state):
+        return None, 0, 0, 0
+    
+    current_state = start_state
+    T = 1000  
+    alpha = 0.95  
+    T_min = 0.01  
+    path = [current_state]
+    nodes_expanded = 0  
+    
+    while T > T_min and current_state != goal_state:
+        neighbors = get_next_states(current_state)
+        nodes_expanded += len(neighbors)  
+        next_state = random.choice(neighbors)
+        
+        current_h = manhattan_distance(current_state, goal_state)
+        next_h = manhattan_distance(next_state, goal_state)
+        delta_E = next_h - current_h
+        
+        if delta_E < 0 or random.random() < math.exp(-delta_E / T):
+            current_state = next_state
+            path.append(current_state)
+        
+        T *= alpha
+    
+    search_depth = len(path) - 1  
+    path_cost = len(path) - 1  
+    return path, nodes_expanded, search_depth, path_cost
+
+def beam_search(start_state, goal_state, beam_width=2):
+    if not is_solvable(start_state, goal_state):
+        return None, 0, 0, 0
+    
+    queue = [(heuristic(start_state, goal_state), start_state, [start_state], 0)]
+    visited = set([start_state])
+    nodes_expanded = 0
+    
+    while queue:
+        current_level = queue
+        queue = []
+        for h, current_state, path, cost in current_level:
+            if current_state == goal_state:
+                return path, nodes_expanded, len(path) - 1, cost
+            next_states = get_next_states(current_state)
+            nodes_expanded += len(next_states)
+        
+            for next_state in next_states:
+                if next_state not in visited:
+                    visited.add(next_state)
+                    new_cost = cost + 1
+                    new_h = heuristic(next_state, goal_state)
+                    queue.append((new_h, next_state, path + [next_state], new_cost))
+        
+        queue.sort(key=lambda x: x[0])  
+        queue = queue[:beam_width]  
+    return None, nodes_expanded, 0, 0
+
 # Hàm giao diện
 def update_positions():
     global GRID_OFFSET_X, GRID_OFFSET_Y, start_rect, goal_rect, algo_rect, solve_rect, reset_rect, prev_rect, next_rect, results_pos, input_width, button_width, button_height
-    # Cập nhật kích thước ô dựa trên kích thước cửa sổ
     CELL_SIZE = min(WIDTH // 5, HEIGHT // 5)
     GRID_OFFSET_X = WIDTH // 4 - (CELL_SIZE * 3) // 2 + 170
     GRID_OFFSET_Y = HEIGHT // 6
@@ -500,8 +606,20 @@ def show_message_box(screen, message):
     return result
 
 # Các biến toàn cục
-algorithms = {"BFS": bfs, "DFS": dfs, "UCS": ucs, "IDS": ids, "Greedy": greedy_search, "A*": astar, "IDA*": ida_star, "SHC": simple_hill_climbing, "STEEPEST": steepest_hill_climbing}
-selected_algorithm = "SHC"
+algorithms = {"BFS": bfs, 
+              "DFS": dfs, 
+              "UCS": ucs, 
+              "IDS": ids, 
+              "Greedy": greedy_search, 
+              "A*": astar, 
+              "IDA*": ida_star, 
+              "SIMPLE HC": simple_hill_climbing, 
+              "STEEPEST HC": steepest_hill_climbing,
+              "STOCHASTIC HC": stochastic_hill_climbing,
+              "SA": simulated_annealing,
+              "Beam Search": beam_search,
+              }
+selected_algorithm = "BFS"
 path = None
 current_state = start_state
 current_step = 0
@@ -575,12 +693,12 @@ while running:
             else:
                 if prev_rect.collidepoint(event.pos) and path and current_step > 0:
                     auto_play = False
-                    animate_swap(screen, current_state, path[current_step - 1])
+                    #animate_swap(screen, current_state, path[current_step - 1])
                     current_step -= 1
                     current_state = path[current_step]
                 elif next_rect.collidepoint(event.pos) and path and current_step < len(path) - 1:
                     auto_play = False
-                    animate_swap(screen, current_state, path[current_step + 1])
+                    #animate_swap(screen, current_state, path[current_step + 1])
                     current_step += 1
                     current_state = path[current_step]
                 elif start_rect.collidepoint(event.pos):
