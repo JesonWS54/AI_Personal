@@ -42,7 +42,7 @@ TIMER_FONT = pygame.font.SysFont("Roboto", 20, bold=True)
 LABEL_FONT = pygame.font.SysFont("Roboto", 20, bold=True)
 
 # Trạng thái ban đầu và mục tiêu
-start_state = "123045678"
+start_state = "123045786"
 goal_state = "123456780"
 start_input = start_state
 goal_input = goal_state
@@ -362,30 +362,57 @@ def simulated_annealing(start_state, goal_state):
         return None, 0, 0, 0
     
     current_state = start_state
-    T = 1000  
-    alpha = 0.95  
-    T_min = 0.01  
+    best_state = start_state
+    best_h = manhattan_distance(start_state, goal_state)
+    T = 5 * best_h  # Tỷ lệ với heuristic ban đầu
+    alpha = 0.995   # Làm nguội chậm hơn một chút
+    T_min = 0.5
     path = [current_state]
-    nodes_expanded = 0  
+    best_path = [current_state]
+    nodes_expanded = 0
+    max_iterations = 20000
+    iteration = 0
     
-    while T > T_min and current_state != goal_state:
+    while T > T_min and iteration < max_iterations:
         neighbors = get_next_states(current_state)
-        nodes_expanded += len(neighbors)  
-        next_state = random.choice(neighbors)
+        nodes_expanded += len(neighbors)
+        
+        # Chọn láng giềng với ưu tiên trạng thái tốt hơn
+        neighbor_heuristics = [(n, manhattan_distance(n, goal_state)) for n in neighbors]
+        neighbor_heuristics.sort(key=lambda x: x[1])  # Sắp xếp theo heuristic
+        if random.random() < 0.7:  # 70% chọn trạng thái tốt nhất
+            next_state = neighbor_heuristics[0][0]
+        else:
+            next_state = random.choice(neighbors)
         
         current_h = manhattan_distance(current_state, goal_state)
         next_h = manhattan_distance(next_state, goal_state)
         delta_E = next_h - current_h
         
-        if delta_E < 0 or random.random() < math.exp(-delta_E / T):
+        # Cập nhật trạng thái tốt nhất
+        if next_h < best_h:
+            best_state = next_state
+            best_h = next_h
+            best_path = path + [next_state]
+        
+        # Chấp nhận trạng thái mới
+        if delta_E <= 0 or random.random() < math.exp(-delta_E / T):
             current_state = next_state
             path.append(current_state)
         
+        # Kiểm tra nếu đạt mục tiêu
+        if current_state == goal_state:
+            search_depth = len(path) - 1
+            path_cost = len(path) - 1
+            return path, nodes_expanded, search_depth, path_cost
+        
         T *= alpha
+        iteration += 1
     
-    search_depth = len(path) - 1  
-    path_cost = len(path) - 1  
-    return path, nodes_expanded, search_depth, path_cost
+    # Nếu không đạt mục tiêu, trả về đường đi tốt nhất
+    search_depth = len(best_path) - 1
+    path_cost = len(best_path) - 1
+    return best_path, nodes_expanded, search_depth, path_cost
 
 def beam_search(start_state, goal_state, beam_width=2):
     if not is_solvable(start_state, goal_state):
@@ -413,6 +440,206 @@ def beam_search(start_state, goal_state, beam_width=2):
         
         queue.sort(key=lambda x: x[0])  
         queue = queue[:beam_width]  
+    return None, nodes_expanded, 0, 0
+
+def and_or_search(start_state, goal_state):
+    if not is_solvable(start_state, goal_state):
+        return None, 0, 0, 0
+    
+    # Hàm phụ để tìm kiếm OR
+    def or_search(state, path, visited, nodes_expanded):
+        if state == goal_state:
+            return path, nodes_expanded
+        if state in visited:
+            return None, nodes_expanded
+        
+        visited.add(state)
+        next_states = get_next_states(state)
+        # Sắp xếp theo heuristic để ưu tiên trạng thái tốt hơn
+        next_states.sort(key=lambda x: heuristic(x, goal_state))
+        
+        for next_state in next_states:
+            if next_state not in visited:
+                nodes_expanded += 1
+                result, new_nodes = or_search(next_state, path + [next_state], visited, nodes_expanded)
+                nodes_expanded = new_nodes
+                if result is not None:
+                    return result, nodes_expanded
+        return None, nodes_expanded
+    
+    visited = set()
+    path = [start_state]
+    nodes_expanded = 0
+    
+    # Gọi tìm kiếm OR từ trạng thái ban đầu
+    result, nodes_expanded = or_search(start_state, path, visited, nodes_expanded)
+    
+    if result is None:
+        return None, nodes_expanded, 0, 0
+    
+    search_depth = len(result) - 1
+    path_cost = len(result) - 1
+    return result, nodes_expanded, search_depth, path_cost
+
+def genetic_algorithm(start_state, goal_state, population_size=50, max_generations=1000, mutation_rate=0.1):
+    if not is_solvable(start_state, goal_state):
+        return None, 0, 0, 0
+
+    # Các hướng di chuyển
+    moves = ["Up", "Down", "Left", "Right"]
+
+    # Hàm áp dụng một bước di chuyển
+    def apply_move(state, move):
+        row, col = find_zero(state)
+        if move == "Up" and row > 0:
+            new_row, new_col = row - 1, col
+        elif move == "Down" and row < 2:
+            new_row, new_col = row + 1, col
+        elif move == "Left" and col > 0:
+            new_row, new_col = row, col - 1
+        elif move == "Right" and col < 2:
+            new_row, new_col = row, col + 1
+        else:
+            return state  # Bước không hợp lệ
+        old_idx = row * 3 + col
+        new_idx = new_row * 3 + new_col
+        state_list = list(state)
+        state_list[old_idx], state_list[new_idx] = state_list[new_idx], state_list[old_idx]
+        return ''.join(state_list)
+
+    # Hàm áp dụng chuỗi di chuyển
+    def apply_moves(start, moves_list):
+        state = start
+        path = [state]
+        for move in moves_list:
+            new_state = apply_move(state, move)
+            if new_state == state:  # Bước không hợp lệ
+                break
+            state = new_state
+            path.append(state)
+        return state, path
+
+    # Hàm tạo cá thể ngẫu nhiên
+    def generate_individual(length):
+        return [random.choice(moves) for _ in range(length)]
+
+    # Hàm tạo quần thể
+    def generate_population(size, length):
+        return [generate_individual(length) for _ in range(size)]
+
+    # Hàm fitness
+    def fitness(moves_list):
+        final_state, _ = apply_moves(start_state, moves_list)
+        h = heuristic(final_state, goal_state)
+        penalty = len(moves_list) * 0.1  # Phạt độ dài chuỗi
+        return h + penalty
+
+    # Hàm lai ghép
+    def crossover(parent1, parent2):
+        split = random.randint(1, len(parent1) - 1)
+        child = parent1[:split] + parent2[split:]
+        return child
+
+    # Hàm đột biến
+    def mutate(moves_list):
+        moves_list = moves_list.copy()
+        for i in range(len(moves_list)):
+            if random.random() < mutation_rate:
+                moves_list[i] = random.choice(moves)
+        return moves_list
+
+    # Khởi tạo
+    max_moves = 50  # Giới hạn số bước tối đa
+    population = generate_population(population_size, max_moves)
+    nodes_expanded = population_size
+    best_fitness = float('inf')
+    best_path = [start_state]
+
+    for generation in range(max_generations):
+        # Đánh giá fitness
+        fitness_scores = [(ind, fitness(ind)) for ind in population]
+        fitness_scores.sort(key=lambda x: x[1])
+
+        # Kiểm tra giải pháp
+        best_individual, best_fitness = fitness_scores[0]
+        final_state, path = apply_moves(start_state, best_individual)
+        if final_state == goal_state:
+            return path, nodes_expanded, len(path) - 1, len(path) - 1
+
+        # Cập nhật best_path
+        if fitness(best_individual) < best_fitness:
+            best_fitness = fitness(best_individual)
+            best_path = path
+
+        # Chọn lọc
+        elite_size = population_size // 4
+        new_population = [ind for ind, _ in fitness_scores[:elite_size]]
+
+        # Lai ghép và đột biến
+        while len(new_population) < population_size:
+            parent1, parent2 = random.sample([ind for ind, _ in fitness_scores[:elite_size * 2]], 2)
+            child = crossover(parent1, parent2)
+            child = mutate(child)
+            new_population.append(child)
+            nodes_expanded += 1
+
+        population = new_population
+
+    return best_path, nodes_expanded, len(best_path) - 1, len(best_path) - 1
+
+def belief_state_search(initial_belief_states, goal_state):
+    if not any(is_solvable(state, goal_state) for state in initial_belief_states):
+        return None, 0, 0, 0
+    
+    # Chọn một trạng thái đại diện để theo dõi đường đi
+    initial_state = next(state for state in initial_belief_states if is_solvable(state, goal_state))
+    initial_belief = frozenset(initial_belief_states)
+    # Lưu cả belief state và trạng thái đại diện
+    queue = deque([(initial_belief, initial_state, [(initial_belief, initial_state)], [])])
+    visited = {initial_belief}
+    nodes_expanded = 0
+    actions = ["Up", "Down", "Left", "Right"]
+    
+    def apply_action_to_state(state, action):
+        row, col = find_zero(state)
+        if action == "Up" and row > 0:
+            new_row, new_col = row - 1, col
+        elif action == "Down" and row < 2:
+            new_row, new_col = row + 1, col
+        elif action == "Left" and col > 0:
+            new_row, new_col = row, col - 1
+        elif action == "Right" and col < 2:
+            new_row, new_col = row, col + 1
+        else:
+            return state
+        old_idx = row * 3 + col
+        new_idx = new_row * 3 + new_col
+        state_list = list(state)
+        state_list[old_idx], state_list[new_idx] = state_list[new_idx], state_list[old_idx]
+        return ''.join(state_list)
+    
+    def apply_action_to_belief(belief_state, action):
+        new_states = set()
+        for state in belief_state:
+            new_state = apply_action_to_state(state, action)
+            new_states.add(new_state)
+        return frozenset(new_states)
+    
+    while queue:
+        current_belief, current_state, path, action_path = queue.popleft()
+        
+        if goal_state == current_state:
+            state_path = [state for _, state in path]
+            return state_path, nodes_expanded, len(state_path) - 1, len(state_path) - 1
+        
+        for action in actions:
+            next_belief = apply_action_to_belief(current_belief, action)
+            next_state = apply_action_to_state(current_state, action)
+            if next_belief not in visited:
+                visited.add(next_belief)
+                queue.append((next_belief, next_state, path + [(next_belief, next_state)], action_path + [action]))
+                nodes_expanded += 1
+    
     return None, nodes_expanded, 0, 0
 
 # Hàm giao diện
@@ -618,6 +845,9 @@ algorithms = {"BFS": bfs,
               "STOCHASTIC HC": stochastic_hill_climbing,
               "SA": simulated_annealing,
               "Beam Search": beam_search,
+              "And-Or Search": and_or_search, 
+              "Genetic Algorithm": genetic_algorithm,
+              "Belief State Search": belief_state_search
               }
 selected_algorithm = "BFS"
 path = None
@@ -716,31 +946,51 @@ while running:
                             is_solving = True
                             start_state = start_input
                             goal_state = goal_input
-                            if not is_solvable(start_state, goal_state):
-                                show_message_box(screen, "This puzzle is not solvable!")
-                                is_solving = False
-                            else:
-                                solving = True
-                                path, nodes_expanded, search_depth, path_cost = algorithms[selected_algorithm](start_state, goal_state)
-                                if not path or path[-1] != goal_state:
-                                    show_message_box(screen, "No solution found!")
-                                    path = [start_state]
-                                    total_steps = 0
-                                    solved = False
-                                    solving = False
+                            solving = True
+                            if selected_algorithm == "Belief State Search":
+                                belief_states = [start_state]
+                                neighbors = get_next_states(start_state)
+                                for neighbor in neighbors:
+                                    if len(belief_states) < 3:
+                                        belief_states.append(neighbor)
+                                if not any(is_solvable(state, goal_state) for state in belief_states):
+                                    show_message_box(screen, "No solvable state in belief set!")
                                     is_solving = False
-                                    solved_message_printed = False
+                                    solving = False
                                 else:
-                                    total_steps = len(path) - 1
-                                    if not solved_message_printed:
-                                        print(f"Solved with {selected_algorithm} in {total_steps} steps.")
-                                        solved_message_printed = True
-                                    auto_play = True
-                                    solved = False
-                                current_step = 0
-                                current_state = start_state
-                                timer_start = time.time()
-                                last_step_time = time.time()
+                                    path, nodes_expanded, search_depth, path_cost = algorithms[selected_algorithm](belief_states, goal_state)
+                                    # Debug path
+                                    if path:
+                                        print("Belief State Search path:", path)
+                            else:
+                                if not is_solvable(start_state, goal_state):
+                                    show_message_box(screen, "This puzzle is not solvable!")
+                                    is_solving = False
+                                    solving = False
+                                else:
+                                    path, nodes_expanded, search_depth, path_cost = algorithms[selected_algorithm](start_state, goal_state)
+                                    # Debug path
+                                    if path:
+                                        print(f"{selected_algorithm} path:", path)
+                            if not path:
+                                show_message_box(screen, "No solution found!")
+                                path = [start_state]
+                                total_steps = 0
+                                solved = False
+                                solving = False
+                                is_solving = False
+                                solved_message_printed = False
+                            else:
+                                total_steps = len(path) - 1
+                                if not solved_message_printed:
+                                    print(f"Solved with {selected_algorithm} in {total_steps} steps.")
+                                    solved_message_printed = True
+                                auto_play = True
+                                solved = False
+                            current_step = 0
+                            current_state = start_state
+                            timer_start = time.time()
+                            last_step_time = time.time()
                     else:
                         is_solving = False
                         auto_play = False
