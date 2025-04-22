@@ -594,9 +594,9 @@ def belief_state_search(initial_belief_states, goal_state):
     # Chọn một trạng thái đại diện để theo dõi đường đi
     initial_state = next(state for state in initial_belief_states if is_solvable(state, goal_state))
     initial_belief = frozenset(initial_belief_states)
-    # Lưu cả belief state và trạng thái đại diện
-    queue = deque([(initial_belief, initial_state, [(initial_belief, initial_state)], [])])
-    visited = {initial_belief}
+    # Sử dụng A* thay vì BFS, với f = g + h
+    queue = [(heuristic(initial_state, goal_state), 0, initial_belief, initial_state, [(initial_belief, initial_state)], [])]
+    visited = {initial_belief: 0}  # Lưu chi phí g nhỏ nhất
     nodes_expanded = 0
     actions = ["Up", "Down", "Left", "Right"]
     
@@ -625,20 +625,32 @@ def belief_state_search(initial_belief_states, goal_state):
             new_states.add(new_state)
         return frozenset(new_states)
     
+    def belief_heuristic(belief):
+        # Heuristic là giá trị nhỏ nhất của Manhattan Distance từ các trạng thái trong belief đến goal_state
+        return min(heuristic(state, goal_state) for state in belief)
+    
+    heapq.heapify(queue)
     while queue:
-        current_belief, current_state, path, action_path = queue.popleft()
+        _, g, current_belief, current_state, path, action_path = heapq.heappop(queue)
         
-        if goal_state == current_state:
+        # Kiểm tra xem bất kỳ trạng thái nào trong current_belief có khớp với goal_state không
+        if goal_state in current_belief:
+            # Thêm goal_state vào cuối đường đi
             state_path = [state for _, state in path]
-            return state_path, nodes_expanded, len(state_path) - 1, len(state_path) - 1
+            if state_path[-1] != goal_state:
+                state_path.append(goal_state)
+            return state_path, nodes_expanded, len(state_path) - 1, g
         
         for action in actions:
             next_belief = apply_action_to_belief(current_belief, action)
             next_state = apply_action_to_state(current_state, action)
-            if next_belief not in visited:
-                visited.add(next_belief)
-                queue.append((next_belief, next_state, path + [(next_belief, next_state)], action_path + [action]))
+            new_g = g + 1
+            if next_belief not in visited or new_g < visited[next_belief]:
+                visited[next_belief] = new_g
                 nodes_expanded += 1
+                h = belief_heuristic(next_belief)
+                f = new_g + h
+                heapq.heappush(queue, (f, new_g, next_belief, next_state, path + [(next_belief, next_state)], action_path + [action]))
     
     return None, nodes_expanded, 0, 0
 
