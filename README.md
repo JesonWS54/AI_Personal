@@ -34,7 +34,7 @@ Mục tiêu chính:
 - **Uniform Cost Search (UCS)**
 - **Iterative Deepening Search (IDS)**
 
-#### 🔹 Hình ảnh gif từng thuật toán (Ví dụ - thay bằng gif thật của bạn):
+#### 🔹 Hình ảnh gif từng thuật toán
 
 | Thuật toán | Gif minh họa        |
 | ---------- | ------------------- |
