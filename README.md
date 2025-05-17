@@ -63,9 +63,32 @@ Mục tiêu chính:
 
 ### 2.2. Các thuật toán Tìm kiếm có thông tin
 
-> _(Chưa hoàn thành – bạn có thể thêm nội dung tương tự 2.1 sau)_
+#### ✅ Thành phần bổ sung:
 
----
+- **Hàm heuristic (ước lượng):** Đánh giá chi phí từ trạng thái hiện tại đến goal.
+  - Heuristic dùng: `Misplaced Tiles`, `Manhattan Distance`.
+
+#### 🧠 Thuật toán đã hoàn thành:
+
+| Thuật toán | Gif minh họa             |
+| ---------- | ------------------------ |
+| Greedy     | ![](./gifs/greedy.gif)   |
+| A\*        | ![](./gifs/astar.gif)    |
+| IDA\*      | ![](./gifs/ida_star.gif) |
+
+#### 📊 So sánh hiệu suất:
+
+| Thuật toán | Nodes Expanded | Depth | Time (s) |
+| ---------- | -------------- | ----- | -------- |
+| Greedy     | 300            | 22    | 0.2      |
+| A\*        | 400            | 16    | 0.3      |
+| IDA\*      | 600            | 16    | 0.35     |
+
+#### 📝 Nhận xét:
+
+- A\* thường tìm được lời giải tối ưu và nhanh hơn UCS.
+- Greedy nhanh nhưng không đảm bảo tối ưu.
+- IDA* là sự kết hợp giữa DFS và A*, tiết kiệm bộ nhớ nhưng chậm hơn A\*.
 
 ### 2.3. Các thuật toán Cục bộ
 
