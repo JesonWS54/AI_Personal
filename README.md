@@ -70,11 +70,11 @@ Mục tiêu chính:
 
 #### 🧠 Thuật toán đã hoàn thành:
 
-| Thuật toán | Gif minh họa             |
-| ---------- | ------------------------ |
-| Greedy     | ![](./gifs/greedy.gif)   |
-| Astar      | ![](./gifs/Astar.gif)    |
-| IDstar     | ![](./gifs/ida_star.gif) |
+| Thuật toán | Gif minh họa            |
+| ---------- | ----------------------- |
+| Greedy     | ![](./gifs/greedy.gif)  |
+| A\*        | ![](./gifs/Astar.gif)   |
+| ID\*       | ![](./gifs/IDAstar.gif) |
 
 #### 📊 So sánh hiệu suất:
 
