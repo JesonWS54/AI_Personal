@@ -73,8 +73,8 @@ Mục tiêu chính:
 | Thuật toán | Gif minh họa             |
 | ---------- | ------------------------ |
 | Greedy     | ![](./gifs/greedy.gif)   |
-| A\*        | ![](./gifs/astar.gif)    |
-| IDA\*      | ![](./gifs/ida_star.gif) |
+| Astar      | ![](./gifs/astar.gif)    |
+| IDstar     | ![](./gifs/ida_star.gif) |
 
 #### 📊 So sánh hiệu suất:
 
