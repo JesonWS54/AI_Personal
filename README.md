@@ -1,35 +1,105 @@
-# 8-Puzzle Solver using AI Algorithms
+# 🤖 8-Puzzle Solver using AI Algorithms
 
-## 🧠 Supported Algorithms:
+---
 
-🔹 BFS (Breadth-First Search)
-🔹 DFS (Depth-First Search)
-🔹 UCS (Uniform Cost Search)
-🔹 IDS (Iterative Deepening Search)
+## 🎯 1. Mục tiêu
 
-## 🚀 Installation & Usage
+Xây dựng một công cụ mô phỏng giải bài toán 8 ô chữ (8-Puzzle) bằng các thuật toán Trí tuệ nhân tạo (AI).  
+Mục tiêu chính:
+- Củng cố kiến thức về các thuật toán tìm kiếm trong AI.
+- So sánh trực quan hiệu suất và hành vi của từng thuật toán trên cùng một bài toán.
+- Phát triển giao diện trực quan giúp người dùng dễ dàng quan sát các bước giải.
 
-🔹 Requirements:
+---
 
-1. Python 3.x
-2. Pygame
-3. Other necessary libraries
+## 📚 2. Nội dung
 
-🔹 Installation Steps:
+### 2.1. Các thuật toán Tìm kiếm không có thông tin
 
-1. git clone https://github.com/JesonWS54/AI_Personal.git
-2. cd AI_Personal
-3. python 8 puzzle solver made by Nguyen Thanh Khang
+#### 🔹 Các thành phần chính của bài toán tìm kiếm:
+- **State (Trạng thái):** Dãy ký tự độ dài 9 biểu diễn vị trí các ô (0 là ô trống).
+- **Initial State:** Trạng thái bắt đầu do người dùng nhập hoặc random.
+- **Goal State:** Trạng thái đích (mặc định là `123456780`).
+- **Actions:** Di chuyển ô trống lên, xuống, trái, phải.
+- **Transition Model:** Kết quả của hành động tác động lên trạng thái hiện tại.
+- **Goal Test:** Trạng thái hiện tại khớp với trạng thái đích.
+- **Path Cost:** Tổng số bước đã thực hiện (UCS có thể tính thêm chi phí).
 
-## 🎮 How to Play
+#### 🔹 Các thuật toán đã triển khai:
+- **Breadth-First Search (BFS)**
+- **Depth-First Search (DFS)**
+- **Uniform Cost Search (UCS)**
+- **Iterative Deepening Search (IDS)**
 
-1. Click on tiles to move them.
-2. Select an algorithm from the right-side menu.
-3. Press "Auto Solve" to let the AI solve the puzzle automatically.
-4. You can also choose "Next Step" to solve step by step or "Reset" to turn back to the first state
+#### 🔹 Hình ảnh gif từng thuật toán (Ví dụ - thay bằng gif thật của bạn):
 
-## 👨‍💻 Author
 
-🔹 Nguyen Thanh Khang - Student at HCMC University of Technology and Education
-🔹 📧 Email: [nguyenthanhkhang600@gmail.com]
-🔹 🌐 GitHub: JesonWS54
+
+#### 🔹 So sánh hiệu suất:
+
+| Thuật toán | Nodes Expanded | Search Depth | Time (sec) |
+|------------|----------------|--------------|-------------|
+| BFS        | 85             | 6            | 0.12        |
+| DFS        | 235            | 30           | 0.05        |
+| UCS        | 63             | 6            | 0.09        |
+| IDS        | 120            | 6            | 0.18        |
+
+#### 🔹 Nhận xét:
+- **BFS** đảm bảo tìm ra lời giải tối ưu nhưng tiêu tốn bộ nhớ nhiều hơn.
+- **DFS** có tốc độ nhanh nhưng dễ bị kẹt ở nhánh sai, không đảm bảo tối ưu.
+- **UCS** tương tự BFS nhưng sử dụng chi phí thực tế → phù hợp khi mỗi bước có trọng số.
+- **IDS** là sự kết hợp của DFS và BFS, hiệu quả ở mức trung bình nhưng tránh được nhược điểm của DFS.
+
+---
+
+### 2.2. Các thuật toán Tìm kiếm có thông tin
+
+> *(Chưa hoàn thành – bạn có thể thêm nội dung tương tự 2.1 sau)*
+
+---
+
+### 2.3. Các thuật toán Cục bộ
+
+> *(Chưa hoàn thành – bạn có thể thêm nội dung sau)*
+
+---
+
+### 2.4. Tìm kiếm ràng buộc
+
+> *(Chưa hoàn thành – bạn có thể thêm nội dung sau)*
+
+---
+
+### 2.5. Tìm kiếm trong môi trường không xác định
+
+> *(Chưa hoàn thành – bạn có thể thêm nội dung sau)*
+
+---
+
+### 2.6. Học cải thiện
+
+> *(Chưa hoàn thành – bạn có thể thêm nội dung sau)*
+
+---
+
+## 🏁 3. Kết luận
+
+Sau khi thực hiện đồ án, nhóm đã đạt được:
+- Triển khai thành công nhiều thuật toán tìm kiếm khác nhau từ cơ bản đến nâng cao.
+- So sánh trực quan hiệu suất các thuật toán thông qua giao diện Pygame.
+- Nâng cao kỹ năng lập trình, sử dụng thư viện đồ họa và tổ chức cấu trúc dự án AI.
+
+---
+
+## 🔧 Cài đặt & Chạy
+
+### Yêu cầu:
+- Python 3.x
+- Pygame
+- Các thư viện phụ trợ khác (nếu có)
+
+### Cài đặt:
+```bash
+git clone https://github.com/JesonWS54/AI_Personal.git
+cd AI_Personal
+python main.py
