@@ -74,7 +74,7 @@ Mục tiêu chính:
 | ---------- | ----------------------- |
 | Greedy     | ![](./gifs/greedy.gif)  |
 | A\*        | ![](./gifs/Astar.gif)   |
-| ID\*       | ![](./gifs/IDAstar.gif) |
+| IDA\*       | ![](./gifs/IDAstar.gif) |
 
 #### 📊 So sánh hiệu suất:
 
