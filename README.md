@@ -246,7 +246,7 @@ Mục tiêu chính:
 | Thuật toán             | Gif minh họa                 |
 | ---------------------- | ---------------------------- |
 | Backtracking           | ![](./gifs/Backtracking.gif) |
-| Backtracking with AC-3 | ![](./gifs/Ac3.gif)          |
+| Backtracking with AC-3 | ![](./gifs/AC3.gif)          |
 | AC-3 only              | ![](./gifs/Minconflicts.gif) |
 
 #### 🔹 So sánh hiệu suất:
