@@ -90,6 +90,8 @@ Mục tiêu chính:
 - Greedy nhanh nhưng không đảm bảo tối ưu.
 - IDA* là sự kết hợp giữa DFS và A*, tiết kiệm bộ nhớ nhưng chậm hơn A\*.
 
+---
+
 ### 2.3. Các thuật toán Tìm kiếm cục bộ
 
 #### 🔹 Các thành phần chính của bài toán tìm kiếm:
@@ -142,6 +144,8 @@ Mục tiêu chính:
 - **Beam Search** sử dụng nhiều "tia sáng" (đường đi song song) để tăng cơ hội thoát bẫy, nhưng phụ thuộc vào beam width.
 - **Genetic Algorithm** mô phỏng quá trình tiến hóa tự nhiên, hiệu quả trong tìm lời giải gần đúng nhưng cần tinh chỉnh tham số như mutation/crossover rate.
 
+---
+
 ### 2.4. Các thuật toán Học cải thiện
 
 #### 🔹 Các thành phần chính của bài toán tìm kiếm:
@@ -176,6 +180,8 @@ Mục tiêu chính:
 - Do 8-puzzle là bài toán có không gian trạng thái lớn nhưng không có vòng lặp trạng thái rõ ràng, **Q-learning hoạt động như một mô phỏng học thử nhiều lần** (hơn 1000 episode).
 - Tuy không đảm bảo tìm được lời giải tối ưu, **Q-Learning vẫn tìm được lời giải khả thi** sau khi được huấn luyện trên nhiều lượt thử, và biểu diễn rõ trên giao diện từng bước di chuyển từ start đến goal.
 - Mô phỏng thuật toán trên giao diện hiển thị từng bước di chuyển của agent sau khi đã học xong.
+
+---
 
 ### 2.5. Tìm kiếm trong môi trường không xác định
 
