@@ -268,7 +268,7 @@ Mục tiêu chính:
 
 ## 🏁 3. Kết luận
 
-Sau khi thực hiện đồ án, đạt được:
+Sau khi thực hiện đồ án, kết quả đạt được:
 
 - Triển khai thành công nhiều thuật toán tìm kiếm khác nhau từ cơ bản đến nâng cao.
 - So sánh trực quan hiệu suất các thuật toán thông qua giao diện Pygame.
