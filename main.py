@@ -5,6 +5,8 @@ from gui import *
 from utils import *
 from algorithms import algorithms  
 from gui import PartialObservationScreen
+from algorithms.Constrained_searching.Backtracking import CSPBacktracking
+from algorithms.Constrained_searching.Testing import CSPMinConflicts
 import random
 
 # Khởi tạo Pygame
@@ -15,7 +17,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption("8-Puzzle Solver")
 
 # Biến trạng thái
-start_state = "123045786"
+start_state = "123405786"  # Thử trạng thái có thể giải được
 goal_state = "123456780"
 start_input = start_state
 goal_input = goal_state
@@ -55,6 +57,10 @@ active_screen = "main"
 
 CELL_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, positions = update_positions(WIDTH, HEIGHT)
 
+def validate_state(state):
+    """Kiểm tra trạng thái có hợp lệ không (9 ký tự, chứa 0-8 duy nhất)"""
+    return len(state) == 9 and set(state) == set('012345678')
+
 def run_belief_state_search(belief_states, goal_state, result_container):
     def progress_callback(step, sim_progress):
         global progress_text
@@ -82,7 +88,6 @@ def run_partial_observation_search(belief_states, goal_state, result_container):
         result_container['path_cost'] = path_cost
     except Exception as e:
         result_container['error'] = str(e)
-
 
 # Main loop
 while running:
@@ -152,11 +157,11 @@ while running:
             else:
                 if positions['prev_rect'].collidepoint(event.pos) and path and current_step > 0:
                     current_step -= 1
-                    current_state = random.choice(list(path[current_step]))
+                    current_state = path[current_step] if isinstance(path[current_step], str) else random.choice(list(path[current_step]))
                     auto_play = False
                 elif positions['next_rect'].collidepoint(event.pos) and path and current_step < len(path) - 1:
                     current_step += 1
-                    current_state = next(iter(path[current_step]))
+                    current_state = path[current_step] if isinstance(path[current_step], str) else next(iter(path[current_step]))
                     auto_play = False
                 elif positions['start_rect'].collidepoint(event.pos):
                     input_active = "start"
@@ -176,6 +181,11 @@ while running:
                             solving = True
                             is_paused = False
 
+                            if not validate_state(start_state) or not validate_state(goal_state):
+                                show_message_box("Invalid state! Must be a 9-digit string with digits 0-8.")
+                                solving = is_solving = False
+                                continue
+
                             if selected_algorithm in ["Belief State Search", "Partial Obs. Search"]:
                                 belief_states = set([start_state] + get_next_states(start_state)[:2])
                                 if not any(is_solvable(state, goal_state) for state in belief_states):
@@ -185,9 +195,9 @@ while running:
                                     computing = True
                                     result_container = {}
                                     search_thread = threading.Thread(
-    target=run_belief_state_search if selected_algorithm == "Belief State Search" else run_partial_observation_search,
-    args=(belief_states, goal_state, result_container)
-)
+                                        target=run_belief_state_search if selected_algorithm == "Belief State Search" else run_partial_observation_search,
+                                        args=(belief_states, goal_state, result_container)
+                                    )
                                     search_thread.start()
                                     timer_start = time.time()
                                     progress_text = "Computing... Initializing"
@@ -197,23 +207,77 @@ while running:
                                     solving = is_solving = False
                                 else:
                                     path, nodes_expanded, search_depth, path_cost = algorithms[selected_algorithm](start_state, goal_state)
-                                    if not path:
-                                        show_message_box("No solution found!")
+                                    if not path or len(path) <= 1:
+                                        show_message_box("No solution found or no new states!")
                                         path = [start_state]
                                         total_steps = 0
                                         solved = solving = is_solving = False
                                     else:
                                         q_learning_screen = QLearningScreen(screen, WIDTH, HEIGHT, path)
                                         active_screen = "q_learning"
+                            # (Giữ nguyên các phần khác, chỉ sửa khối "Solve")
+                            elif selected_algorithm in ["CSP Backtracking", "Forward Checking", "Min-Conflicts"]:
+                                def update_visual(state):
+                                    global current_state
+                                    current_state = ''.join(str(tile) for row in state for tile in row)
+                                    draw_board(current_state, screen, CELL_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, selected_algorithm)
+                                    pygame.display.flip()
+                                    time.sleep(0.3)
 
+                                def update_status(msg):
+                                    print(f"[{selected_algorithm}]", msg)
+
+                                if selected_algorithm == "CSP Backtracking":
+                                    solver = CSPBacktracking(
+                                        start_state=start_state,
+                                        goal_state=goal_state,
+                                        visualization_callback=update_visual,
+                                        status_callback=update_status,
+                                        delay=0.3
+                                    )
+                                elif selected_algorithm == "Forward Checking":
+                                    solver = CSPForwardChecking(
+                                        start_state=start_state,
+                                        goal_state=goal_state,
+                                        visualization_callback=update_visual,
+                                        status_callback=update_status,
+                                        delay=0.3
+                                    )
+                                else:  # Min-Conflicts
+                                    solver = CSPMinConflicts(
+                                        start_state=start_state,
+                                        goal_state=goal_state,
+                                        visualization_callback=update_visual,
+                                        status_callback=update_status,
+                                        delay=0.3,
+                                        max_iterations=5000
+                                    )
+                                path, nodes_expanded, search_depth, path_cost = solver.solve()
+                                print(f"[DEBUG] Min-Conflicts path: {path}")
+
+                                if not path or len(path) <= 1:
+                                    show_message_box("No valid CSP state found!")
+                                    path = [start_state]
+                                    total_steps = 0
+                                    solved = solving = is_solving = False
+                                else:
+                                    total_steps = len(path) - 1
+                                    auto_play = True
+                                    solved = False
+                                    current_step = 0
+                                    current_state = start_state
+                                    timer_start = time.time()
+                                    last_step_time = time.time()
                             else:
                                 if not is_solvable(start_state, goal_state):
                                     show_message_box("This puzzle is not solvable!")
                                     solving = is_solving = False
                                 else:
+                                    print(f"Running algorithm: {selected_algorithm} with start_state={start_state}, goal_state={goal_state}")
                                     path, nodes_expanded, search_depth, path_cost = algorithms[selected_algorithm](start_state, goal_state)
-                                    if not path:
-                                        show_message_box("No solution found!")
+                                    print(f"Result: path={path}, nodes_expanded={nodes_expanded}, search_depth={search_depth}, path_cost={path_cost}")
+                                    if not path or len(path) <= 1:
+                                        show_message_box("No solution found or no new states!")
                                         path = [start_state]
                                         total_steps = 0
                                         solved = solving = is_solving = False
@@ -297,12 +361,12 @@ while running:
                 current_state = next(iter(path[current_step]))
             else:
                 current_state = path[current_step]
-
             last_step_time = current_time
             if current_step == len(path) - 1:
                 auto_play = False
                 solved = True
                 solving = is_solving = False
+
     if active_screen == "sensorless":
         sensorless_screen.draw()
     elif active_screen == "partial_obs":
@@ -311,9 +375,6 @@ while running:
         q_learning_screen.draw()
     else:
         draw_title(screen, WIDTH)
-        # print("DEBUG TYPE OF current_state:", type(current_state))
-        # print("DEBUG VALUE OF current_state:", current_state)
-
         draw_board(current_state, screen, CELL_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, selected_algorithm, latest_observation)
         draw_input_box(screen, start_input, positions['start_rect'], input_active == "start")
         draw_input_box(screen, goal_input, positions['goal_rect'], input_active == "goal")
@@ -326,7 +387,6 @@ while running:
         draw_dropdown(screen, selected_algorithm, positions['algo_rect'], list(algorithms.keys()), dropdown_open, pygame.mouse.get_pos(), dropdown_open, algo_display_offset)
         if dropdown_open:
             draw_dropdown(screen, selected_algorithm, positions['algo_rect'], list(algorithms.keys()), dropdown_open, pygame.mouse.get_pos(), False, algo_display_offset)
-
 
     if computing:
         progress_surface = TIMER_FONT.render(progress_text, True, TITLE_COLOR)

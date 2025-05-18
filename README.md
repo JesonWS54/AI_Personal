@@ -47,10 +47,10 @@ Mục tiêu chính:
 
 | Thuật toán | Nodes Expanded | Search Depth | Time (sec) |
 | ---------- | -------------- | ------------ | ---------- |
-| BFS        | 85             | 6            | 0.12       |
-| DFS        | 235            | 30           | 0.05       |
-| UCS        | 63             | 6            | 0.09       |
-| IDS        | 120            | 6            | 0.18       |
+| BFS        | 85             | 6            | 10.26      |
+| DFS        | 235            | 30           | 23.63      |
+| UCS        | 63             | 6            | 10.21      |
+| IDS        | 120            | 6            | 12.30      |
 
 #### 🔹 Nhận xét:
 
@@ -80,9 +80,9 @@ Mục tiêu chính:
 
 | Thuật toán | Nodes Expanded | Depth | Time (s) |
 | ---------- | -------------- | ----- | -------- |
-| Greedy     | 300            | 22    | 0.2      |
-| A\*        | 400            | 16    | 0.3      |
-| IDA\*      | 600            | 16    | 0.35     |
+| Greedy     | 300            | 22    | 24.62    |
+| A\*        | 400            | 16    | 10.20    |
+| IDA\*      | 600            | 16    | 10.20    |
 
 #### 📝 Nhận xét:
 
@@ -128,12 +128,12 @@ Mục tiêu chính:
 
 | Thuật toán          | Nodes Expanded | Search Depth | Time (sec) |
 | ------------------- | -------------- | ------------ | ---------- |
-| Simple HC           | 40             | 8            | 0.03       |
-| Steepest HC         | 60             | 9            | 0.04       |
-| Stochastic HC       | 75             | 10           | 0.05       |
-| Simulated Annealing | 120            | 11           | 0.08       |
-| Beam Search         | 90             | 8            | 0.06       |
-| Genetic Algorithm   | 200            | 12           | 0.12       |
+| Simple HC           | 40             | 8            | 2.55       |
+| Steepest HC         | 60             | 9            | 2.52       |
+| Stochastic HC       | 75             | 10           | 2.55       |
+| Simulated Annealing | 120            | 11           | 3.59       |
+| Beam Search         | 90             | 8            | 50.89      |
+| Genetic Algorithm   | 200            | 12           | 15.34      |
 
 #### 🔹 Nhận xét:
 
@@ -172,7 +172,7 @@ Mục tiêu chính:
 
 | Thuật toán | Nodes Expanded | Search Depth | Time (sec) |
 | ---------- | -------------- | ------------ | ---------- |
-| Q-Learning | 274            | 48           | 0.82       |
+| Q-Learning |                |              |            |
 
 #### 🔹 Nhận xét:
 
