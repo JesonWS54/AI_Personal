@@ -10,14 +10,14 @@ from algorithms.Constrained_searching.Testing import CSPMinConflicts
 import random
 
 # Khởi tạo Pygame
-pygame.init()
+pygame.init()   
 WIDTH = 900
 HEIGHT = 700
 screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption("8-Puzzle Solver")
 
 # Biến trạng thái
-start_state = "123405786"  # Thử trạng thái có thể giải được
+start_state = "724506831"  # Thử trạng thái có thể giải được
 goal_state = "123456780"
 start_input = start_state
 goal_input = goal_state
@@ -340,7 +340,7 @@ while running:
             nodes_expanded = result_container.get('nodes_expanded', 0)
             search_depth = result_container.get('search_depth', 0)
             path_cost = result_container.get('path_cost', 0)
-            belief_states = set.union(*path) if path and isinstance(path[0], (set, frozenset)) else set()
+            belief_states = set().union(*[set(p) for p in path]) if path and isinstance(path[0], (set, frozenset)) else set()
             goal_probability = 1.0 if path and ((goal_state in path[-1]) if isinstance(path[-1], (set, frozenset)) else path[-1] == goal_state) else 0.0
             if not path:
                 show_message_box("No solution found!")

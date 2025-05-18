@@ -247,7 +247,7 @@ Mục tiêu chính:
 | ---------------------- | ---------------------------- |
 | Backtracking           | ![](./gifs/Backtracking.gif) |
 | Backtracking with AC-3 | ![](./gifs/AC3.gif)          |
-| AC-3 only              | ![](./gifs/Minconflicts.gif) |
+| Minconflicts           | ![](./gifs/Minconflicts.gif) |
 
 #### 🔹 So sánh hiệu suất:
 
@@ -261,7 +261,7 @@ Mục tiêu chính:
 
 - **Backtracking** kiểm tra tất cả các khả năng, dễ hiểu nhưng có thể bị lặp lại và kém hiệu quả với bài toán lớn.
 - **Backtracking with AC-3** giúp loại bỏ sớm các giá trị không hợp lệ → thu hẹp không gian tìm kiếm, tăng hiệu suất đáng kể.
-- **AC-3 only** không tạo ra lời giải cụ thể nhưng kiểm tra nhanh trạng thái có thỏa ràng buộc hay không, giúp xác định đầu vào hợp lệ.
+- ** Minconflicts ** không tạo ra lời giải cụ thể nhưng kiểm tra nhanh trạng thái có thỏa ràng buộc hay không, giúp xác định đầu vào hợp lệ.
 - CSP là nhóm thuật toán cực kỳ hữu ích khi cần giải quyết bài toán có nhiều ràng buộc, như lập lịch, sudoku, hoặc tạo trạng thái khởi đầu hợp lệ trong 8-puzzle.
 
 ---
