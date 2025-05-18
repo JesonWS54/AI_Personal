@@ -185,7 +185,41 @@ Mục tiêu chính:
 
 ### 2.5. Tìm kiếm trong môi trường không xác định
 
-> _(Chưa hoàn thành – bạn có thể thêm nội dung sau)_
+#### 🔹 Các thành phần chính của bài toán tìm kiếm:
+
+- **State (Trạng thái):** Tập hợp các trạng thái có thể xảy ra (belief state), vì agent không chắc chắn đang ở trạng thái nào cụ thể.
+- **Initial State:** Một tập hợp các trạng thái có thể (ví dụ: `{s1, s2, s3}`).
+- **Goal State:** Một trạng thái duy nhất mà agent muốn đạt đến (mặc định là `123456780`).
+- **Actions:** Di chuyển ô trống theo 4 hướng: lên, xuống, trái, phải.
+- **Transition Model:** Hành động tác động lên tất cả các trạng thái trong belief state và tạo ra belief state mới.
+- **Goal Test:** Belief state chỉ còn lại một trạng thái duy nhất, và đó chính là goal.
+- **Path Cost:** Số bước thực hiện từ belief ban đầu đến khi tìm ra goal.
+
+#### 🔹 Các thuật toán đã triển khai:
+
+- **Belief State Search**
+- **Searching with Partial Observation**
+- **And-OR search**
+
+#### 🔹 Hình ảnh gif từng thuật toán
+
+| Thuật toán          | Gif minh họa           |
+| ------------------- | ---------------------- |
+| Belief State Search | ![](./gifs/Belief.gif) |
+
+#### 🔹 So sánh hiệu suất:
+
+| Thuật toán          | Nodes Expanded | Search Depth | Time (sec) |
+| ------------------- | -------------- | ------------ | ---------- |
+| Belief State Search |                |              |            |
+
+#### 🔹 Nhận xét:
+
+- **Belief State Search** là cách tiếp cận tổng quát, xử lý mọi trạng thái không chắc chắn nhưng khá tốn bộ nhớ và thời gian.
+- **Partial Observation Search** tận dụng thông tin biết trước một phần trạng thái đích để loại trừ sớm những nhánh không phù hợp, giúp tìm nhanh hơn và hiệu quả hơn.
+- **And-Or Search** phù hợp với môi trường không xác định và không đầy đủ thông tin, giúp agent có kế hoạch linh hoạt theo từng trường hợp. Tuy nhiên, thuật toán này phức tạp hơn trong triển khai và có thể tốn tài nguyên với không gian lớn.
+- Giao diện trực quan được tách riêng giúp người dùng dễ theo dõi từng bước thay đổi của belief state theo thời gian.
+- Các thuật toán này phù hợp với môi trường agent không thể xác định chính xác trạng thái ban đầu và cần ra quyết định dựa trên tập hợp các khả năng.
 
 ---
 
