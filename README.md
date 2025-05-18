@@ -223,9 +223,46 @@ Mục tiêu chính:
 
 ---
 
-### 2.6. Tìm kiếm ràng buộc
+### 2.6. Các thuật toán Tìm kiếm có ràng buộc (CSP - Constraint Satisfaction Problems)
 
-> _(Chưa hoàn thành – bạn có thể thêm nội dung sau)_
+#### 🔹 Các thành phần chính của bài toán tìm kiếm:
+
+- **Variable (Biến):** Các ô trong ma trận 3x3 tương ứng với 9 vị trí cần điền từ 1 đến 8 và một ô trống (0).
+- **Domain:** Tập giá trị hợp lệ mỗi biến có thể nhận, ban đầu là `{0,1,2,3,4,5,6,7,8}`.
+- **Constraints (Ràng buộc):**
+  - Mỗi giá trị chỉ xuất hiện đúng một lần trong toàn bộ trạng thái.
+  - Trạng thái tạo ra phải hợp lệ (không trùng lặp, đủ các số).
+- **Goal Test:** Tìm được một trạng thái thỏa ràng buộc, có thể là trạng thái đích hoặc trạng thái đầu vào hợp lệ.
+- **Path Cost:** Không tính theo từng bước di chuyển như các thuật toán trước, mà đánh giá qua số lượng ràng buộc được thoả mãn và độ sâu tìm kiếm.
+
+#### 🔹 Các thuật toán đã triển khai:
+
+- **Backtracking**
+- **Backtracking with AC-3 (Arc Consistency 3)**
+- **AC-3 only**
+
+#### 🔹 Hình ảnh gif từng thuật toán
+
+| Thuật toán             | Gif minh họa                 |
+| ---------------------- | ---------------------------- |
+| Backtracking           | ![](./gifs/Backtracking.gif) |
+| Backtracking with AC-3 | ![](./gifs/Ac3.gif)          |
+| AC-3 only              | ![](./gifs/Minconflicts.gif) |
+
+#### 🔹 So sánh hiệu suất:
+
+| Thuật toán             | Nodes Expanded | Search Depth | Time (sec) |
+| ---------------------- | -------------- | ------------ | ---------- |
+| Backtracking           | 54             | 9            | 0.22       |
+| Backtracking with AC-3 | 32             | 8            | 0.15       |
+| Minconflicts           | 18             | -            | 0.10       |
+
+#### 🔹 Nhận xét:
+
+- **Backtracking** kiểm tra tất cả các khả năng, dễ hiểu nhưng có thể bị lặp lại và kém hiệu quả với bài toán lớn.
+- **Backtracking with AC-3** giúp loại bỏ sớm các giá trị không hợp lệ → thu hẹp không gian tìm kiếm, tăng hiệu suất đáng kể.
+- **AC-3 only** không tạo ra lời giải cụ thể nhưng kiểm tra nhanh trạng thái có thỏa ràng buộc hay không, giúp xác định đầu vào hợp lệ.
+- CSP là nhóm thuật toán cực kỳ hữu ích khi cần giải quyết bài toán có nhiều ràng buộc, như lập lịch, sudoku, hoặc tạo trạng thái khởi đầu hợp lệ trong 8-puzzle.
 
 ---
 
