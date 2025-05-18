@@ -14,7 +14,7 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption("8-Puzzle Solver")
 
 # Biến trạng thái
-start_state = "724506831"
+start_state = "123045786"
 goal_state = "123456780"
 start_input = start_state
 goal_input = goal_state

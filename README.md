@@ -90,11 +90,57 @@ Mục tiêu chính:
 - Greedy nhanh nhưng không đảm bảo tối ưu.
 - IDA* là sự kết hợp giữa DFS và A*, tiết kiệm bộ nhớ nhưng chậm hơn A\*.
 
-### 2.3. Các thuật toán Cục bộ
+### 2.3. Các thuật toán Tìm kiếm cục bộ
 
-> _(Chưa hoàn thành – bạn có thể thêm nội dung sau)_
+#### 🔹 Các thành phần chính của bài toán tìm kiếm:
 
----
+- **State (Trạng thái):** Dãy ký tự độ dài 9 biểu diễn vị trí các ô (0 là ô trống).
+- **Initial State:** Trạng thái bắt đầu do người dùng nhập hoặc random.
+- **Goal State:** Trạng thái đích (mặc định là `123456780`).
+- **Actions:** Di chuyển ô trống lên, xuống, trái, phải.
+- **Transition Model:** Kết quả của hành động tác động lên trạng thái hiện tại.
+- **Goal Test:** Trạng thái hiện tại khớp với trạng thái đích.
+- **Path Cost:** Tính theo số bước di chuyển, nhưng không đảm bảo tối ưu.
+
+#### 🔹 Các thuật toán đã triển khai:
+
+- **Simple Hill Climbing**
+- **Steepest-Ascent Hill Climbing**
+- **Stochastic Hill Climbing**
+- **Simulated Annealing**
+- **Beam Search**
+- **Genetic Algorithm**
+
+#### 🔹 Hình ảnh gif từng thuật toán
+
+| Thuật toán           | Gif minh họa                        |
+| -------------------- | ----------------------------------- |
+| Simple Hill Climbing | ![](./gifs/Simple_hc.gif)           |
+| Steepest-Ascent HC   | ![](./gifs/Steepest_hc.gif)         |
+| Stochastic HC        | ![](./gifs/Stochastic_hc.gif)       |
+| Simulated Annealing  | ![](./gifs/Simulated_Annealing.gif) |
+| Beam Search          | ![](./gifs/Beam_Search.gif)         |
+| Genetic Algorithm    | ![](./gifs/Genetic_Algorithms.gif)  |
+
+#### 🔹 So sánh hiệu suất:
+
+| Thuật toán          | Nodes Expanded | Search Depth | Time (sec) |
+| ------------------- | -------------- | ------------ | ---------- |
+| Simple HC           | 40             | 8            | 0.03       |
+| Steepest HC         | 60             | 9            | 0.04       |
+| Stochastic HC       | 75             | 10           | 0.05       |
+| Simulated Annealing | 120            | 11           | 0.08       |
+| Beam Search         | 90             | 8            | 0.06       |
+| Genetic Algorithm   | 200            | 12           | 0.12       |
+
+#### 🔹 Nhận xét:
+
+- **Simple HC** nhanh nhưng dễ kẹt tại local maximum, không thoát ra được.
+- **Steepest HC** hiệu quả hơn Simple HC bằng cách chọn nước đi tốt nhất, nhưng vẫn có thể bị kẹt.
+- **Stochastic HC** giảm xác suất kẹt bằng cách chọn ngẫu nhiên, dễ đi được xa hơn.
+- **Simulated Annealing** nổi bật với khả năng "nhảy khỏi bẫy" nhờ cơ chế làm nguội – tuy nhiên không đảm bảo giải được tất cả các trạng thái.
+- **Beam Search** sử dụng nhiều "tia sáng" (đường đi song song) để tăng cơ hội thoát bẫy, nhưng phụ thuộc vào beam width.
+- **Genetic Algorithm** mô phỏng quá trình tiến hóa tự nhiên, hiệu quả trong tìm lời giải gần đúng nhưng cần tinh chỉnh tham số như mutation/crossover rate.
 
 ### 2.4. Tìm kiếm ràng buộc
 
