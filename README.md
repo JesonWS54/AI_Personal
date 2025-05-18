@@ -115,9 +115,9 @@ Mục tiêu chính:
 
 | Thuật toán           | Gif minh họa                        |
 | -------------------- | ----------------------------------- |
-| Simple Hill Climbing | ![](./gifs/Simple_hc.gif)           |
-| Steepest-Ascent HC   | ![](./gifs/Steepest_hc.gif)         |
-| Stochastic HC        | ![](./gifs/Stochastic_hc.gif)       |
+| Simple Hill Climbing | ![](./gifs/Simple_HC.gif)           |
+| Steepest-Ascent HC   | ![](./gifs/Steepest_HC.gif)         |
+| Stochastic HC        | ![](./gifs/Stochastic_HC.gif)       |
 | Simulated Annealing  | ![](./gifs/Simulated_Annealing.gif) |
 | Beam Search          | ![](./gifs/Beam_Search.gif)         |
 | Genetic Algorithm    | ![](./gifs/Genetic_Algorithms.gif)  |
