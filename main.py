@@ -4,6 +4,7 @@ import threading
 from gui import *
 from utils import *
 from algorithms import algorithms  
+from gui import PartialObservationScreen
 import random
 
 # Khởi tạo Pygame
@@ -98,7 +99,13 @@ while running:
                 solving = is_solving = False
                 q_learning_screen = None
             continue
-
+        
+        elif active_screen == "partial_obs":
+            if not partial_obs_screen.handle_event(event):
+                active_screen = "main"
+                solving = is_solving = False
+                partial_obs_screen = None
+            continue
 
         if active_screen == "sensorless":
             if not sensorless_screen.handle_event(event):
@@ -264,18 +271,19 @@ while running:
             total_steps = 0
             solved = solving = is_solving = False
         else:
-            path = result_container.get('path', [start_state])
+            raw_path = result_container.get('path', [start_state])
+            path = [frozenset(p) if isinstance(p, set) else p for p in raw_path]
             nodes_expanded = result_container.get('nodes_expanded', 0)
             search_depth = result_container.get('search_depth', 0)
             path_cost = result_container.get('path_cost', 0)
-            belief_states = set.union(*path) if path else set()
-            goal_probability = 1.0 if path and path[-1] == goal_state else 0.0
+            belief_states = set.union(*path) if path and isinstance(path[0], (set, frozenset)) else set()
+            goal_probability = 1.0 if path and ((goal_state in path[-1]) if isinstance(path[-1], (set, frozenset)) else path[-1] == goal_state) else 0.0
             if not path:
                 show_message_box("No solution found!")
                 path = [set([start_state])]
                 solved = solving = is_solving = False
             else:
-                sensorless_screen = SensorlessScreen(screen, WIDTH, HEIGHT, path)
+                sensorless_screen = PartialObservationScreen(screen, WIDTH, HEIGHT, path)
                 active_screen = "sensorless"
 
     if timer_start and not solved and not is_paused:
@@ -297,6 +305,8 @@ while running:
                 solving = is_solving = False
     if active_screen == "sensorless":
         sensorless_screen.draw()
+    elif active_screen == "partial_obs":
+        partial_obs_screen.draw()
     elif active_screen == "q_learning":
         q_learning_screen.draw()
     else:

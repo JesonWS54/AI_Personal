@@ -1,10 +1,10 @@
+# algorithms/Searching_in_an_uncertain_environment/Searching_With_Partial_Observation.py
 from collections import deque
 
 def is_consistent(state, known_tile_index, known_value):
     return state[known_tile_index] == known_value
 
 def apply_action(state, action):
-    print(">> Đang xử lý state:", state)
     idx = state.index('0')
     row, col = divmod(idx, 3)
     dr, dc = action
@@ -20,9 +20,8 @@ def apply_action_to_belief(belief_state, action, known_index=None, known_value=N
     new_belief = set()
     for state in belief_state:
         new_state = apply_action(state, action)
-        if new_state:
-            if known_index is None or is_consistent(new_state, known_index, known_value):
-                new_belief.add(new_state)
+        if new_state and (known_index is None or is_consistent(new_state, known_index, known_value)):
+            new_belief.add(new_state)
     return new_belief
 
 def partial_observation_search(initial_belief, goal, known_tile_index=0, known_tile_value='1', progress_callback=None):
@@ -49,7 +48,8 @@ def partial_observation_search(initial_belief, goal, known_tile_index=0, known_t
                 visited.add(frozen_new)
                 queue.append((new_belief, path + [frozenset(belief_state)]))
 
+    return [], len(visited), 0, 0
+
 
 def run(belief_states, goal_state, progress_callback=None):
-    # Giả sử ta biết số 1 nằm ở góc trên trái (vị trí 0)
     return partial_observation_search(belief_states, goal_state, known_tile_index=0, known_tile_value='1', progress_callback=progress_callback)

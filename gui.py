@@ -214,6 +214,45 @@ class SensorlessScreen:
                 return False  # quay về giao diện chính
         return True
 
+
+class PartialObservationScreen:
+    def __init__(self, screen, width, height, solution_steps):
+        self.screen = screen
+        self.width = width
+        self.height = height
+        self.solution = solution_steps
+        self.current_step = 0
+
+        self.NEXT_BUTTON = pygame.Rect(self.width * 0.8, self.height * 0.3, 150, 50)
+        self.PREV_BUTTON = pygame.Rect(self.width * 0.8, self.height * 0.4, 150, 50)
+        self.BACK_BUTTON = pygame.Rect(self.width * 0.8, self.height * 0.5, 150, 50)
+
+    def draw(self):
+        self.screen.fill((44, 62, 80))
+        draw_title(self.screen, self.width)
+        draw_belief_states(list(self.solution[0]), "Initial Belief State", self.height * 0.15, self.screen, self.width)
+
+        if self.current_step > 0:
+            draw_belief_states(list(self.solution[self.current_step]), f"Step {self.current_step}", self.height * 0.5, self.screen, self.width)
+
+        draw_button(self.screen, "Next", self.NEXT_BUTTON, is_hover=self.NEXT_BUTTON.collidepoint(pygame.mouse.get_pos()))
+        draw_button(self.screen, "Previous", self.PREV_BUTTON, is_hover=self.PREV_BUTTON.collidepoint(pygame.mouse.get_pos()))
+        draw_button(self.screen, "Back to Main", self.BACK_BUTTON, is_hover=self.BACK_BUTTON.collidepoint(pygame.mouse.get_pos()))
+
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.NEXT_BUTTON.collidepoint(event.pos):
+                if self.current_step < len(self.solution) - 1:
+                    self.current_step += 1
+            elif self.PREV_BUTTON.collidepoint(event.pos):
+                if self.current_step > 0:
+                    self.current_step -= 1
+            elif self.BACK_BUTTON.collidepoint(event.pos):
+                return False
+        return True
+
+
+
 class QLearningScreen:
     def __init__(self, screen, width, height, solution_steps):
         self.screen = screen
