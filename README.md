@@ -239,7 +239,7 @@ Mục tiêu chính:
 
 - **Backtracking**
 - **Backtracking with AC-3 (Arc Consistency 3)**
-- **AC-3 only**
+- **Minconflicts**
 
 #### 🔹 Hình ảnh gif từng thuật toán
 
