@@ -44,6 +44,7 @@ algorithms = {
     "SA": simulated_annealing,
     "Beam Search": beam_search,
     "Genetic Algorithm": genetic_algorithm,
+    "Q-Learning": q_learning,
     "And-Or Search": lambda s, g: and_or_search(s, g, get_possible_actions, get_action_results),
     "Belief State Search": belief_state_search,
     "Partial Obs. Search": lambda s, g, p=None: partial_observation_search({s}, g, known_tile_index=0, known_tile_value='1', progress_callback=p),

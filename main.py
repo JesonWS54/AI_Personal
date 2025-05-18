@@ -49,6 +49,7 @@ computing = False
 progress_text = ""
 search_thread = None
 sensorless_screen = None
+q_learning_screen = None
 active_screen = "main"
 
 CELL_SIZE, GRID_OFFSET_X, GRID_OFFSET_Y, positions = update_positions(WIDTH, HEIGHT)
@@ -90,6 +91,14 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        # XỬ LÝ GIAO DIỆN Q-LEARNING
+        if active_screen == "q_learning":
+            if not q_learning_screen.handle_event(event):
+                active_screen = "main"
+                solving = is_solving = False
+                q_learning_screen = None
+            continue
+
 
         if active_screen == "sensorless":
             if not sensorless_screen.handle_event(event):
@@ -175,6 +184,21 @@ while running:
                                     search_thread.start()
                                     timer_start = time.time()
                                     progress_text = "Computing... Initializing"
+                            elif selected_algorithm == "Q-Learning":
+                                if not is_solvable(start_state, goal_state):
+                                    show_message_box("This puzzle is not solvable!")
+                                    solving = is_solving = False
+                                else:
+                                    path, nodes_expanded, search_depth, path_cost = algorithms[selected_algorithm](start_state, goal_state)
+                                    if not path:
+                                        show_message_box("No solution found!")
+                                        path = [start_state]
+                                        total_steps = 0
+                                        solved = solving = is_solving = False
+                                    else:
+                                        q_learning_screen = QLearningScreen(screen, WIDTH, HEIGHT, path)
+                                        active_screen = "q_learning"
+
                             else:
                                 if not is_solvable(start_state, goal_state):
                                     show_message_box("This puzzle is not solvable!")
@@ -273,6 +297,8 @@ while running:
                 solving = is_solving = False
     if active_screen == "sensorless":
         sensorless_screen.draw()
+    elif active_screen == "q_learning":
+        q_learning_screen.draw()
     else:
         draw_title(screen, WIDTH)
         # print("DEBUG TYPE OF current_state:", type(current_state))

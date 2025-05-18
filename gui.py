@@ -213,3 +213,62 @@ class SensorlessScreen:
             elif self.BACK_BUTTON.collidepoint(event.pos):
                 return False  # quay về giao diện chính
         return True
+
+class QLearningScreen:
+    def __init__(self, screen, width, height, solution_steps):
+        self.screen = screen
+        self.width = width
+        self.height = height
+        self.solution = solution_steps  # List of strings (states)
+        self.current_step = 0
+
+        self.NEXT_BUTTON = pygame.Rect(self.width * 0.8, self.height * 0.3, 150, 50)
+        self.PREV_BUTTON = pygame.Rect(self.width * 0.8, self.height * 0.4, 150, 50)
+        self.BACK_BUTTON = pygame.Rect(self.width * 0.8, self.height * 0.5, 150, 50)
+
+    def draw(self):
+        self.screen.fill((44, 62, 80))  # Màu nền
+
+        # Căn giữa bảng puzzle
+        center_x = self.width // 2 - (CELL_SIZE * 3) // 2
+        center_y = self.height // 2 - (CELL_SIZE * 3) // 2 - 50
+
+        # Vẽ bảng
+        state = self.solution[self.current_step]
+        for i in range(3):
+            for j in range(3):
+                idx = i * 3 + j
+                num = state[idx]
+                rect = pygame.Rect(center_x + j * CELL_SIZE, center_y + i * CELL_SIZE, CELL_SIZE, CELL_SIZE)
+                color = EMPTY_COLOR if num == '0' else TILE_COLOR
+                pygame.draw.rect(self.screen, color, rect)
+                pygame.draw.rect(self.screen, (255, 255, 255), rect, 2)
+                if num != '0':
+                    font = pygame.font.Font(None, 48)
+                    text = font.render(num, True, TEXT_COLOR)
+                    self.screen.blit(text, text.get_rect(center=rect.center))
+
+        # Vẽ bước hiện tại
+        step_text = TITLE_FONT.render(f"Step: {self.current_step}/{len(self.solution) - 1}", True, (255, 255, 255))
+        self.screen.blit(step_text, (center_x, center_y + CELL_SIZE * 3 + 20))
+
+        # ✅ Thêm dòng chữ mô tả Q-learning
+        msg_text = TITLE_FONT.render("Q-learning found a solution path", True, (255, 255, 255))
+        self.screen.blit(msg_text, (center_x, center_y + CELL_SIZE * 3 + 50))
+
+        # Nút điều khiển
+        draw_button(self.screen, "Next", self.NEXT_BUTTON, is_hover=self.NEXT_BUTTON.collidepoint(pygame.mouse.get_pos()))
+        draw_button(self.screen, "Previous", self.PREV_BUTTON, is_hover=self.PREV_BUTTON.collidepoint(pygame.mouse.get_pos()))
+        draw_button(self.screen, "Back to Main", self.BACK_BUTTON, is_hover=self.BACK_BUTTON.collidepoint(pygame.mouse.get_pos()))
+
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.NEXT_BUTTON.collidepoint(event.pos):
+                if self.current_step < len(self.solution) - 1:
+                    self.current_step += 1
+            elif self.PREV_BUTTON.collidepoint(event.pos):
+                if self.current_step > 0:
+                    self.current_step -= 1
+            elif self.BACK_BUTTON.collidepoint(event.pos):
+                return False
+        return True

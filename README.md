@@ -142,11 +142,40 @@ Mục tiêu chính:
 - **Beam Search** sử dụng nhiều "tia sáng" (đường đi song song) để tăng cơ hội thoát bẫy, nhưng phụ thuộc vào beam width.
 - **Genetic Algorithm** mô phỏng quá trình tiến hóa tự nhiên, hiệu quả trong tìm lời giải gần đúng nhưng cần tinh chỉnh tham số như mutation/crossover rate.
 
-### 2.4. Tìm kiếm ràng buộc
+### 2.4. Các thuật toán Học cải thiện
 
-> _(Chưa hoàn thành – bạn có thể thêm nội dung sau)_
+#### 🔹 Các thành phần chính của bài toán tìm kiếm:
 
----
+- **State (Trạng thái):** Dãy ký tự độ dài 9 biểu diễn vị trí các ô (0 là ô trống).
+- **Initial State:** Trạng thái bắt đầu do người dùng nhập hoặc random.
+- **Goal State:** Trạng thái đích (mặc định là `123456780`).
+- **Actions:** Di chuyển ô trống lên, xuống, trái, phải.
+- **Transition Model:** Kết quả của hành động tác động lên trạng thái hiện tại.
+- **Goal Test:** Trạng thái hiện tại khớp với trạng thái đích.
+- **Path Cost:** Số bước đã thực hiện từ trạng thái bắt đầu đến đích.
+
+#### 🔹 Thuật toán đã triển khai:
+
+- **Q-Learning**
+
+#### 🔹 Hình ảnh gif thuật toán:
+
+| Thuật toán | Gif minh họa               |
+| ---------- | -------------------------- |
+| Q-Learning | ![](./gifs/Q_learning.gif) |
+
+#### 🔹 So sánh hiệu suất:
+
+| Thuật toán | Nodes Expanded | Search Depth | Time (sec) |
+| ---------- | -------------- | ------------ | ---------- |
+| Q-Learning | 274            | 48           | 0.82       |
+
+#### 🔹 Nhận xét:
+
+- **Q-Learning** là thuật toán học tăng cường không yêu cầu mô hình môi trường, nó học thông qua trải nghiệm lặp lại để ước lượng giá trị của hành động trong từng trạng thái.
+- Do 8-puzzle là bài toán có không gian trạng thái lớn nhưng không có vòng lặp trạng thái rõ ràng, **Q-learning hoạt động như một mô phỏng học thử nhiều lần** (hơn 1000 episode).
+- Tuy không đảm bảo tìm được lời giải tối ưu, **Q-Learning vẫn tìm được lời giải khả thi** sau khi được huấn luyện trên nhiều lượt thử, và biểu diễn rõ trên giao diện từng bước di chuyển từ start đến goal.
+- Mô phỏng thuật toán trên giao diện hiển thị từng bước di chuyển của agent sau khi đã học xong.
 
 ### 2.5. Tìm kiếm trong môi trường không xác định
 
@@ -154,7 +183,7 @@ Mục tiêu chính:
 
 ---
 
-### 2.6. Học cải thiện
+### 2.6. Tìm kiếm ràng buộc
 
 > _(Chưa hoàn thành – bạn có thể thêm nội dung sau)_
 
