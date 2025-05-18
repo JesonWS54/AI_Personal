@@ -20,7 +20,7 @@ Mục tiêu chính:
 #### 🔹 Các thành phần chính của bài toán tìm kiếm:
 
 - **State (Trạng thái):** Dãy ký tự độ dài 9 biểu diễn vị trí các ô (0 là ô trống).
-- **Initial State:** Trạng thái bắt đầu do người dùng nhập hoặc random.
+- **Initial State:** Trạng thái bắt đầu do người dùng nhập.
 - **Goal State:** Trạng thái đích (mặc định là `123456780`).
 - **Actions:** Di chuyển ô trống lên, xuống, trái, phải.
 - **Transition Model:** Kết quả của hành động tác động lên trạng thái hiện tại.
@@ -253,9 +253,9 @@ Mục tiêu chính:
 
 | Thuật toán             | Nodes Expanded | Search Depth | Time (sec) |
 | ---------------------- | -------------- | ------------ | ---------- |
-| Backtracking           | 54             | 9            | 0.22       |
-| Backtracking with AC-3 | 32             | 8            | 0.15       |
-| Minconflicts           | 18             | -            | 0.10       |
+| Backtracking           | 54             | 9            |            |
+| Backtracking with AC-3 | 32             | 8            |            |
+| Minconflicts           | 18             | -            |            |
 
 #### 🔹 Nhận xét:
 
